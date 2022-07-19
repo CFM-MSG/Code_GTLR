@@ -1,0 +1,138 @@
+loader_config:
+  train:
+    dataset: "charades"
+    split: "train"
+    dense_query: True
+    data_dir: path_to_data/
+    features_path: path_to_data/c3d_feature/charades_c3d_fc6_nonoverlap.hdf5
+    ann_file_path: path_to_data/train.json
+    embeddings_path: path_to_glove/
+    tokens_json: path_to_data/tokens_corpus.json
+    feature_sample_num: 128
+    min_count: 1
+    train_max_length: 30
+    test_max_length: 30
+    batch_size: 32
+    num_workers: 4
+
+  eval: 
+    dataset: "charades"
+    split: "val"
+    dense_query: True
+    data_dir: path_to_data/
+    features_path: path_to_data/c3d_feature/charades_c3d_fc6_nonoverlap.hdf5
+    ann_file_path: path_to_data/val.json
+    embeddings_path: path_to_glove/
+    tokens_json: path_to_data/tokens_corpus.json
+    feature_sample_num: 128
+    min_count: 1
+    train_max_length: 30
+    test_max_length: 30
+    batch_size: 32
+    num_workers: 4
+
+  test: 
+    dataset: "charades"
+    split: "test"
+    dense_query: True
+    data_dir: path_to_data/
+    features_path: path_to_data/c3d_feature/charades_c3d_fc6_nonoverlap.hdf5
+    ann_file_path: path_to_data/test.json
+    embeddings_path: path_to_glove/
+    tokens_json: path_to_data/tokens_corpus.json
+    feature_sample_num: 128
+    min_count: 1
+    train_max_length: 30
+    test_max_length: 30
+    batch_size: 32
+    num_workers: 4
+
+
+model:
+  arch: GTLR
+  arch_params: 
+    # transformer
+    enc_layers: 4
+    dec_layers: 1
+    nheads: 8
+    dim_feedforward: 512
+    hidden_dim: 256
+    dec_query_idim: 256
+    pre_norm: False
+    dropout: 0.1
+    input_dropout: 0.5
+
+    use_mme: True
+    use_rec: True
+
+
+    # position embedding
+    position_embedding: sine
+    max_q_l: 32
+    
+    # network
+    txt_dim: 300
+    vid_dim: 4096
+    span_loss_type: l1
+    max_v_l: 75
+    use_txt_pos: True
+    n_input_proj: 2
+    contrastive_align_loss: False
+    contrastive_hdim: 64
+    aux_loss: False
+
+    use_word_emb_rec: True
+
+
+
+  loss_type: gtlr_loss
+  loss_params: 
+
+    temperature: 0.07
+
+    loc_loss_weight: 1
+    iou_loss_weight: 1
+    tag_loss_weight: 1
+    use_rec_loss: True
+    rec_loss_weight: 0.01
+
+
+
+## some model parameters is wider than current model.use load_no_strict to igore extra parameters.
+load_no_strict: false
+
+## process switchers block: the task output\epoch
+epochs: 40
+eval_epoch: 1
+train_log: ./log/train_GTLR_charades.txt
+test_log: ./log/test_GTLR_charades.txt
+output: ./results/
+checkpoint_save: charades.ckpt
+best_model_save: charades.best
+
+## optimizer block
+optimizer: adam
+weight_decay: 1.0e-5
+grad_clip: 5
+lr: 4.0e-5
+
+no_wd_bias: True
+bias_lr_factor: 2 # used for bias param in scheduler when no_wd_bias is enabled (get_lr()*bias_lr_factor)
+
+# optimizer_cfg:  #dict, extra config for optimizer, eg. Adam: betas([float, float]), eps(float)
+lr_methods: ['fix'] 
+lr_starts: [1] 
+lr_ends:   [1] 
+lr_steps:  [40] 
+
+## observation block
+#logger
+print_frequency: 400
+#visalization
+vis: False
+vis_method: tensorboard
+vis_port: 6006
+
+
+## test
+seed: 0
