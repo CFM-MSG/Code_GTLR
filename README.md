@@ -76,6 +76,7 @@ If you are interesting in our work, please kindly cite our work according to
   booktitle = {ICME},
   year      = {2022},
 }
+```
 
 Moreover, we sincerely thank the following works for their video features and codes.
 
